@@ -1,0 +1,39 @@
+version: "3"
+x-directus: &directus
+  build: ./docker
+  volumes:
+    - ./.directus/extensions:/directus/extensions
+    - ./.directus/database:/directus/database
+    - ./.directus/uploads:/directus/uploads
+  environment:
+    DIRECTUS_VERSION: "10.5.2"
+    NODE_PACKAGES: |
+      {
+        "directus-extension-blurhash": "latest",
+        "directus-extension-thumbhash": "latest",
+        "@linefusion/directus-extension-text-extractor": "latest"
+      }
+    DIRECTUS_BOOTSTRAP_ENABLED: "false"
+    ADMIN_EMAIL: "admin@example.com"
+    ADMIN_PASSWORD: "linefusion"
+
+services:
+  directus-install:
+    <<: *directus
+    command: directus install
+
+  directus-bootstrap:
+    <<: *directus
+    command: directus bootstrap
+    depends_on:
+      directus-install:
+        condition: service_completed_successfully
+
+  directus:
+    <<: *directus
+    command: directus start
+    ports:
+      - "8055:8055"
+    depends_on:
+      directus-bootstrap:
+        condition: service_completed_successfully

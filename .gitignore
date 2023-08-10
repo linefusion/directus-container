@@ -1,0 +1,4 @@
+.data
+.directus
+dist
+node_modules

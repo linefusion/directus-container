@@ -1,0 +1,9 @@
+{
+  "name": "@linefusion/directus-container",
+  "private": true,
+  "version": "0.0.0",
+  "dependencies": {
+    "@wolfpkgs/core": "^0.2.13",
+    "semver": "^7.5.4"
+  }
+}
