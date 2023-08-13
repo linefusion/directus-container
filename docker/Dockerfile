@@ -1,14 +1,13 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
 # ! TODO: ONBUILD
 # ! TODO: STOPSIGNAL
-# ! TODO: SHELL
 # ! TODO: LABEL
 
 # Base
 
+ENV PNPM_HOME=/usr/local/bin
 RUN \
-  apk add --update --no-cache su-exec && \
   corepack enable && \
   corepack prepare --activate pnpm@latest
 
@@ -31,7 +30,7 @@ ENV DB_CLIENT="sqlite3"
 ENV DB_FILENAME="/directus/database/database.sqlite"
 ENV EXTENSIONS_PATH="/directus/extensions"
 ENV STORAGE_LOCAL_ROOT="/directus/uploads"
-ENV CONFIG_PATH="/directus/bin/config.js"
+ENV CONFIG_PATH="/directus/entrypoint/directus.config.js"
 ENV NPM_CONFIG_UPDATE_NOTIFIER="false"
 
 WORKDIR /directus/
@@ -39,22 +38,31 @@ WORKDIR /directus/
 # Install dependencies
 
 COPY --chown=node:node ./root/ /
-RUN pnpm install
-
-USER root
-
-RUN \
-  chmod a+x /directus/bin/entrypoint.sh && \
-  chmod a+x /directus/bin/directus.sh && \
-  ln -s /directus/bin/directus.sh /usr/bin/directus
 
 USER node
+RUN \
+  mkdir -p /directus/{extensions,database,uploads,node_modules,packages} && \
+  pnpm install
+
+USER root
+RUN \
+  chown -R node:node /directus/ && \
+  chmod +x /usr/bin/directus && \
+  chmod +x /usr/bin/entrypoint && \
+  chmod +x /usr/bin/healthcheck
+USER node
+
 
 # Exports
 
 EXPOSE 8055
 
-VOLUME ["/directus/extensions", "/directus/database", "/directus/uploads"]
+VOLUME "/directus/extensions"
+VOLUME "/directus/database"
+VOLUME "/directus/uploads"
+
+VOLUME "/directus/packages"
+VOLUME "/directus/node_modules"
 
 # Healthchecks
 
@@ -63,9 +71,9 @@ HEALTHCHECK \
   --timeout=30s \
   --start-period=1m \
   --retries=5 \
-  CMD node /directus/bin/healthcheck.js || exit 1
+  CMD healthcheck
 
 # Runtime
 
-ENTRYPOINT [ "./bin/entrypoint.sh" ]
+ENTRYPOINT [ "entrypoint" ]
 CMD ["directus", "start"]

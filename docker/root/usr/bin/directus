@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+set -e
+cd "/directus"
+NODE_OPTIONS="--max-old-space-size=${NODE_MEMORY:-8096} ${NODE_OPTIONS}"
+
+if [ "${1}" == "install" ]; then
+  exit 0
+fi
+
+if [ "${1}" == "start" ]; then
+  if [ "${DIRECTUS_BOOTSTRAP_ENABLED}" == "true" ]; then
+    node "/directus/entrypoint/bin/directus.js" bootstrap
+  fi
+fi
+
+exec node "/directus/entrypoint/bin/directus.js" "$@"

@@ -4,22 +4,55 @@ Alternative container image for Directus.
 
 > `linefusion/directus:latest`
 
-## Usage
+## Overview
 
-This image is meant to be an "universal" image for Directus. It's not bound to any specific Directus version because it will install Directus in runtime rather than build time. This greatly increases the bootstrap time of the container, but allows quickly running Directus with extensions inside a container.
+This image is meant to be an "universal" image for Directus. It's currently not bound to any specific Directus version because it will install Directus in runtime rather than build time. Be aware that **this will greatly increase the bootstrap time of the container** as the packages will be installed when the image runs, but it allows for quickly running Directus containers with extensions.
 
-For production usage it's still recommended to build your own image, but if you can't and/or don't want to, at least make sure to mount the data directory to lower the startup time after the first run.
+The startup time can be increased if you mount `/directus/extensions` to the host, because `pnpm` cache is configured to be stored there. This will allow for faster startup times after the first run.
+
+For production it's still recommended to build your own image with the extensions installed (WIP), but if you can't and/or don't want to, at least make sure to mount the extensions directory to lower the startup time after the first run as the pnpm cache lives there.
+
+## Features
+
+### "Alpha"
+
+- [x] Install Directus in runtime
+- [x] Install Directus extensions in runtime
+- [x] Install additional packages in runtime
+- [x] Flag to turn off automatic `directus bootstrap` execution
+- [x] Flag to turn off automatic installation of `optionalDependencies`
+
+## Planned
+
+- [ ] Increase startup time
+  - [ ] Only run installation process if there's a configuration change
+  - [ ] Provide "container based extensions" to compose the server installation
+  - [ ] Anything that would increase the startup time
+- [ ] Building custom images with extensions
+- [ ] Native support for different registries
+- [ ] Native support for `git` repositories
+- [ ] Native support for `npm` packages
 
 ## Configuration
 
 > The image can be configured using environment variables.
 
-| Name                           | Type/Format                    |     Default |
-| ------------------------------ | ------------------------------ | ----------: |
-| **DIRECTUS_VERSION**           | NPM range or `latest`          |  `"latest"` |
-| **DIRECTUS_BOOTSTRAP_ENABLED** | Boolean. `"true"` or `"false"` |    `"true"` |
-| **DIRECTUS_PACKAGES_ENABLED**  | Boolean. `"true"` or `"false"` |    `"true"` |
-| **NODE_PACKAGES**              | String or Object.              | `undefined` |
+| Name                           | Type/Format                    |      Default |
+| ------------------------------ | ------------------------------ | -----------: |
+| **DIRECTUS_INSTANCE_ID**       | Unique ID for the app          | `"directus"` |
+| **DIRECTUS_VERSION**           | NPM range or `latest`          |   `"latest"` |
+| **DIRECTUS_BOOTSTRAP_ENABLED** | Boolean. `"true"` or `"false"` |     `"true"` |
+| **DIRECTUS_PACKAGES_ENABLED**  | Boolean. `"true"` or `"false"` |     `"true"` |
+| **NODE_PACKAGES**              | String or Object.              |  `undefined` |
+| **EXPERIMENTAL_STARTUP_A**     | Boolean. `"true"` or `"false"` |    `"false"` |
+
+### `DIRECTUS_INSTANCE_ID`
+
+| Value                                       |      Default |
+| ------------------------------------------- | -----------: |
+| An unique ID for the Directus installation. | `"directus"` |
+
+This is used to make independent caches of modules if you have multiple Directus containers.
 
 ### `DIRECTUS_VERSION`
 
@@ -27,7 +60,7 @@ For production usage it's still recommended to build your own image, but if you 
 | --------------------- | ---------: |
 | NPM range or `latest` | `"latest"` |
 
-The Directus version to use.
+The Directus version to use. Note that "latest" doesn't mean the latest released version of Directus, but the one this repository knows about, because the dependency tree is being cached to avoid external lookups and to speed up the build process.
 
 ### `DIRECTUS_BOOTSTRAP_ENABLED`
 
@@ -68,3 +101,11 @@ NODE_PACKAGES='my-dependency,my-dependency2@^4.2.3'
 ```sh
 NODE_PACKAGES='{"my-dependency":"latest","my-dependency2":"^4.2.3"}'
 ```
+
+### `EXPERIMENTAL_STARTUP_A`
+
+| Value                          |   Default |
+| ------------------------------ | --------: |
+| Boolean. `"true"` or `"false"` | `"false"` |
+
+Uses an experimental startup process that aims to increase startup time.

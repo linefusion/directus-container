@@ -2,32 +2,13 @@
 
 import fs from "node:fs";
 import semver from "semver";
-import { memoize } from "./utils";
+import { memoize } from "../common/utils";
 import { RawPackument, getRawPackument } from "query-registry";
 
 import _ from "lodash";
+import { Reference, Release } from "../common/types";
 
-const VERSIONS_FILE = "./docker/root/directus/versions.json";
-
-type Reference = {
-  source: string;
-  name: string;
-  version: string;
-  resolved?: string;
-  type:
-    | "dependencies"
-    | "devDependencies"
-    | "peerDependencies"
-    | "optionalDependencies";
-};
-
-type Release = {
-  name: string;
-  version: string;
-  engines: Record<string, string>;
-  references: Reference[];
-  packages?: Reference[];
-};
+const VERSIONS_FILE = __dirname + "/../versions.json";
 
 const cache = {
   releases: {} as Record<string, Release[]>,
@@ -65,39 +46,43 @@ const getPackageReleases = memoize(async (name: string): Promise<Release[]> => {
     })
     .sort(semver.compare)
     .reverse()
-    .map((version) => ({
-      name,
-      version,
-      engines: pkg.versions[version]?.engines || {},
-      references: ([] as [string, string, Reference["type"]][])
-        .concat(
-          Object.entries(pkg.versions[version]?.dependencies || {}).map((v) => [
-            ...v,
-            "dependencies",
-          ])
-        )
-        //.concat(
-        //  Object.entries(pkg.versions[version]?.devDependencies || {}).map(
-        //    (v) => [...v, "devDependencies"]
-        //  )
-        //)
-        .concat(
-          Object.entries(pkg.versions[version]?.peerDependencies || {}).map(
-            (v) => [...v, "peerDependencies"]
+    .map(
+      (version): Release => ({
+        name,
+        version,
+        engines: pkg.versions[version]?.engines || {},
+        packages: [],
+        references: ([] as [string, string, Reference["type"]][])
+          .concat(
+            Object.entries(pkg.versions[version]?.dependencies || {}).map(
+              (v) => [...v, "dependencies"]
+            )
           )
-        )
-        .concat(
-          Object.entries(pkg.versions[version]?.optionalDependencies || {}).map(
-            (v) => [...v, "optionalDependencies"]
+          //.concat(
+          //  Object.entries(pkg.versions[version]?.devDependencies || {}).map(
+          //    (v) => [...v, "devDependencies"]
+          //  )
+          //)
+          .concat(
+            Object.entries(pkg.versions[version]?.peerDependencies || {}).map(
+              (v) => [...v, "peerDependencies"]
+            )
           )
-        )
-        .map(([refName, refVersion, refType]) => ({
-          source: name,
-          name: refName,
-          version: refVersion,
-          type: refType as any as Reference["type"],
-        })),
-    }));
+          .concat(
+            Object.entries(
+              pkg.versions[version]?.optionalDependencies || {}
+            ).map((v) => [...v, "optionalDependencies"])
+          )
+          .map(
+            ([refName, refVersion, refType]): Reference => ({
+              source: name,
+              name: refName,
+              version: refVersion,
+              type: refType as any as Reference["type"],
+            })
+          ),
+      })
+    );
 
   releases.forEach((release) => {
     cache.release[`${release.name}@${release.version}`] = release;
@@ -143,7 +128,7 @@ async function expandPackage(
   return packages;
 }
 
-(async function main() {
+export async function main() {
   if (!fs.existsSync(VERSIONS_FILE)) {
     fs.writeFileSync(VERSIONS_FILE, "{}");
   }
@@ -152,8 +137,9 @@ async function expandPackage(
     fs.readFileSync(VERSIONS_FILE, { encoding: "utf-8" }).toString()
   );
 
-  const releases = (await getPackageReleases("directus")).filter((release) =>
-    semver.gte(release.version, "10.0.0")
+  const releases = (await getPackageReleases("directus")).filter(
+    (release) =>
+      semver.gte(release.version, "10.0.0") && !(release.version in directus)
   );
 
   let packages: Record<string, Release[]> = {};
@@ -222,5 +208,22 @@ async function expandPackage(
     output[release.version] = root;
   }
 
-  fs.writeFileSync(VERSIONS_FILE, JSON.stringify(output, null, 2));
-})();
+  fs.writeFileSync(
+    VERSIONS_FILE,
+    JSON.stringify(
+      {
+        ...output,
+        ...directus,
+      },
+      null,
+      2
+    )
+  );
+}
+
+if (typeof require !== "undefined" && require.main === module) {
+  main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+}

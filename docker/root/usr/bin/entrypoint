@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+set -e
+cd "/directus"
+NODE_OPTIONS="--max-old-space-size=${NODE_MEMORY:-8096} ${NODE_OPTIONS}"
+
+node "/directus/entrypoint/bin/entrypoint.js"
+
+exec "$@"

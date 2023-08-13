@@ -1,10 +1,11 @@
 import crypto from "node:crypto";
-import { loadSync } from "@wolfpkgs/core/env";
+import { loadEnv } from "./common/env";
 
 export default function (env: Record<string, any>) {
-  Object.entries(loadSync()).forEach(([key, value]) => {
-    env[key] = value;
-  });
+  env = {
+    ...loadEnv(),
+    ...env,
+  };
 
   const generated = {
     KEY: crypto.randomUUID(),

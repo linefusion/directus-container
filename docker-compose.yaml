@@ -1,18 +1,18 @@
 version: "3"
 x-directus: &directus
-  build: ./docker
+  image: linefusion/directus:latest
   volumes:
-    - ./.directus/extensions:/directus/extensions
-    - ./.directus/database:/directus/database
-    - ./.directus/uploads:/directus/uploads
+    - vol-extensions:/directus/extensions
+    - vol-database:/directus/database
+    - vol-uploads:/directus/uploads
+    - vol-packages:/directus/packages
+    - vol-node_modules:/directus/node_modules
   environment:
-    DIRECTUS_VERSION: "10.5.2"
+    DIRECTUS_VERSION: "10.5.3"
     NODE_PACKAGES: |
-      {
-        "directus-extension-blurhash": "latest",
-        "directus-extension-thumbhash": "latest",
-        "@linefusion/directus-extension-text-extractor": "latest"
-      }
+      directus-extension-blurhash
+      directus-extension-thumbhash
+      @linefusion/directus-extension-text-extractor
     DIRECTUS_BOOTSTRAP_ENABLED: "false"
     ADMIN_EMAIL: "admin@example.com"
     ADMIN_PASSWORD: "linefusion"
@@ -37,3 +37,10 @@ services:
     depends_on:
       directus-bootstrap:
         condition: service_completed_successfully
+
+volumes:
+  vol-extensions:
+  vol-database:
+  vol-uploads:
+  vol-packages:
+  vol-node_modules:
