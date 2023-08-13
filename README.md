@@ -37,22 +37,12 @@ For production it's still recommended to build your own image with the extension
 
 > The image can be configured using environment variables.
 
-| Name                           | Type/Format                    |      Default |
-| ------------------------------ | ------------------------------ | -----------: |
-| **DIRECTUS_INSTANCE_ID**       | Unique ID for the app          | `"directus"` |
-| **DIRECTUS_VERSION**           | NPM range or `latest`          |   `"latest"` |
-| **DIRECTUS_BOOTSTRAP_ENABLED** | Boolean. `"true"` or `"false"` |     `"true"` |
-| **DIRECTUS_PACKAGES_ENABLED**  | Boolean. `"true"` or `"false"` |     `"true"` |
-| **NODE_PACKAGES**              | String or Object.              |  `undefined` |
-| **EXPERIMENTAL_STARTUP_A**     | Boolean. `"true"` or `"false"` |    `"false"` |
-
-### `DIRECTUS_INSTANCE_ID`
-
-| Value                                       |      Default |
-| ------------------------------------------- | -----------: |
-| An unique ID for the Directus installation. | `"directus"` |
-
-This is used to make independent caches of modules if you have multiple Directus containers.
+| Name                           | Type/Format                    |     Default |
+| ------------------------------ | ------------------------------ | ----------: |
+| **DIRECTUS_VERSION**           | NPM range or `latest`          |  `"latest"` |
+| **DIRECTUS_BOOTSTRAP_ENABLED** | Boolean. `"true"` or `"false"` |    `"true"` |
+| **DIRECTUS_PACKAGES_ENABLED**  | Boolean. `"true"` or `"false"` |    `"true"` |
+| **NODE_PACKAGES**              | String or Object.              | `undefined` |
 
 ### `DIRECTUS_VERSION`
 
@@ -101,11 +91,3 @@ NODE_PACKAGES='my-dependency,my-dependency2@^4.2.3'
 ```sh
 NODE_PACKAGES='{"my-dependency":"latest","my-dependency2":"^4.2.3"}'
 ```
-
-### `EXPERIMENTAL_STARTUP_A`
-
-| Value                          |   Default |
-| ------------------------------ | --------: |
-| Boolean. `"true"` or `"false"` | `"false"` |
-
-Uses an experimental startup process that aims to increase startup time.
