@@ -41,7 +41,11 @@ COPY --chown=node:node ./root/ /
 
 USER node
 RUN \
-  mkdir -p /directus/{extensions,database,uploads,node_modules,packages} && \
+  mkdir -p /directus/extensions && \
+  mkdir -p /directus/database && \
+  mkdir -p /directus/uploads && \
+  mkdir -p /directus/node_modules && \
+  mkdir -p /directus/packages && \
   pnpm install
 
 USER root

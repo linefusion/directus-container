@@ -1,0 +1,12 @@
+version: "3"
+services:
+  directus:
+    image: linefusion/directus:latest
+    environment:
+      DIRECTUS_VERSION: "10.5.3"
+      NODE_PACKAGES: |
+        directus-extension-computed-interface
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "linefusion"
+    ports:
+      - "8055:8055"

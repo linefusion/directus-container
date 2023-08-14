@@ -7,7 +7,7 @@
     "build": "pnpm build:src && pnpm build:version && pnpm build:copy && pnpm build:docker",
     "build:src": "tsc",
     "build:version": "tsx ./src/bin/versions.ts",
-    "build:copy": "pnpm build:copy:scripts && pnpm build:copy:extras && pnpm build:copy:dist",
+    "build:copy": "pnpm build:copy:extras && pnpm build:copy:dist",
     "build:copy:dist": "wtx files copy --source ./dist/ --target ./docker/root/directus/entrypoint/",
     "build:copy:extras": "wtx files copy --source.base ./src --source.files versions.json --target ./dist/",
     "build:docker": "docker build --file ./docker/Dockerfile --tag linefusion/directus:latest ./docker/"

@@ -1,0 +1,15 @@
+version: "3"
+services:
+  directus:
+    image: directus/directus:10.5.3
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: e32dd7c5-2ccb-4a8d-8607-2269463d0ff5
+      SECRET: 3977f24b-1e2f-43e9-be03-30654b654ca9
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "linefusion"
+    volumes:
+      - ./data/extensions:/directus/extensions
+      - ./data/database:/directus/database
+      - ./data/uploads:/directus/uploads

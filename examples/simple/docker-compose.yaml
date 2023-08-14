@@ -17,7 +17,8 @@ services:
       - database-volume:/directus/database
       - uploads-volume:/directus/uploads
 
-      # Extras (optional): mounting will speed up the startup process.
+      # Extras (optional, recommended)
+      # Mounting these will speed up the startup process.
       # DO NOT mount them as a bind mount (e.g. ./node_modules:/directus/node_modules).
       # Let the container runtime manage the volume instead.
       - packages-volume:/directus/packages
@@ -27,6 +28,7 @@ volumes:
   extensions-volume:
   database-volume:
   uploads-volume:
-  # Extras (optional):
+
+  # Extras (optional, recommended)
   packages-volume:
   modules-volume:
