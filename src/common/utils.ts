@@ -1,8 +1,28 @@
-import { exec } from "child_process";
+import { SpawnOptions, exec, spawn } from "child_process";
 
 const empty = Symbol();
 
-export async function execute(command: string): Promise<{
+export async function execute(
+  command: string,
+  args: string[],
+  options: SpawnOptions
+): Promise<void> {
+  console.log(`Executing: ${command} ${args.join(" ")}`);
+  return new Promise<void>((resolve) => {
+    const child = spawn(command, args, {
+      stdio: "inherit",
+      ...options,
+    });
+    child.on("close", (code: number) => {
+      if (code !== 0) {
+        process.exit(code);
+      }
+      resolve();
+    });
+  });
+}
+
+export async function executeAndReturn(command: string): Promise<{
   text(): string;
   json(defaultValue?: any): any;
 }> {

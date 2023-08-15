@@ -10,7 +10,7 @@
     "build:copy": "pnpm build:copy:extras && pnpm build:copy:dist",
     "build:copy:dist": "wtx files copy --source ./dist/ --target ./docker/root/directus/entrypoint/",
     "build:copy:extras": "wtx files copy --source.base ./src --source.files versions.json --target ./dist/",
-    "build:docker": "docker build --file ./docker/Dockerfile --tag linefusion/directus:latest ./docker/"
+    "build:docker": "tsx ./src/bin/images.ts"
   },
   "dependencies": {
     "@wolfpkgs/core": "^0.2.13",

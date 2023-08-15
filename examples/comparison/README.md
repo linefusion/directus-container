@@ -1,4 +1,6 @@
-First test with the original Directus image:
+# Bind mounts should be useable
+
+First test with the original Directus image
 
 ```sh
 docker-compose --file docker-compose.original.yaml up

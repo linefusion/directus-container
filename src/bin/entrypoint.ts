@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-import fs, { chmod } from "node:fs";
+import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
-import { SpawnOptions, spawn } from "node:child_process";
 import semver from "semver";
 import { Release } from "../common/types";
 import { extractPackages } from "../common/packages";
+import { execute } from "../common/utils";
 
 const releases: Record<string, Release> = require(__dirname +
   "/../versions.json");
@@ -17,6 +17,7 @@ const {
   DIRECTUS_VERSION,
   DIRECTUS_PACKAGES_ENABLED,
   NODE_PACKAGES,
+  ENTRYPOINT_INSTALL,
   ...env
 } = process.env;
 
@@ -77,25 +78,6 @@ async function restorePackageJson(hash: string) {
   }
 
   return true;
-}
-
-async function execute(
-  command: string,
-  args: string[],
-  options: SpawnOptions
-): Promise<void> {
-  return new Promise<void>((resolve) => {
-    const child = spawn(command, args, {
-      stdio: "inherit",
-      ...options,
-    });
-    child.on("close", (code: number) => {
-      if (code !== 0) {
-        process.exit(code);
-      }
-      resolve();
-    });
-  });
 }
 
 export async function installDefault() {
@@ -178,9 +160,9 @@ export async function installExtensions() {
 }
 
 export async function main() {
-  const type =
-    process.argv.find((arg) => arg.startsWith("--type="))?.substring(8) ||
-    "runtime";
+  if (ENTRYPOINT_INSTALL != "true") {
+    return;
+  }
 
   const app = DIRECTUS_INSTANCE_ID || "directus";
 
