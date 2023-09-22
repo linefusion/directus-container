@@ -23,7 +23,7 @@ export async function main() {
     },
   ];
 
-  const pushes = [];
+  const pushes: Promise<any>[] = [];
 
   for (const base of bases) {
     for (const version of ["latest", ...Object.keys(directus)]) {
@@ -36,17 +36,27 @@ export async function main() {
                   (pkg) => pkg.name == "@directus/api"
                 )!;
 
-          const tag = `linefusion/directus:${version}-${base.replace(
-            ":",
-            ""
-          )}-${target}${env.tag}`;
+          const tag = `${version}-${base.replace(":", "")}-${target}${env.tag}`;
+          const fqdn = `linefusion/directus:${tag}`;
+
+          try {
+            const exists = await fetch(
+              `https://hub.docker.com/v2/repositories/linefusion/directus/tags/${tag}/`
+            );
+            if (exists.status != 404 && version != "latest") {
+              continue;
+            }
+          } catch (err) {
+            console.log(err);
+            continue;
+          }
 
           console.log(`
 ---------------------------------------------------------
 
   Building Directus
 
-      Tag: ${tag}
+     FQDN: ${fqdn}
 
   Version: v${version}
       API: v${api.version}
@@ -65,7 +75,7 @@ export async function main() {
               "--target",
               target,
               "--tag",
-              tag,
+              fqdn,
               "--build-arg",
               `NODE_ENV=${env.name}`,
               "--build-arg",
@@ -79,7 +89,7 @@ export async function main() {
             {}
           );
 
-          pushes.push(execute("docker", ["push", tag], {}));
+          pushes.push(execute("docker", ["push", fqdn], {}));
         }
       }
     }
