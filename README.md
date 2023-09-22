@@ -6,11 +6,11 @@ Alternative container image for Directus.
 
 ## Overview
 
-This image is meant to be an "universal" image for Directus. It's currently not bound to any specific Directus version because it will install Directus in runtime rather than build time. Be aware that **this will greatly increase the bootstrap time of the container** as the packages will be installed when the image runs, but it allows for quickly running Directus containers with extensions.
+This image is meant to be an "universal" image for Directus. It's currently not bound to any specific Directus version because it will install Directus in runtime rather than build time. It allows for running Directus containers with extensions installed without building your own images, but beware that **this will greatly increase the bootstrap time of the container** as the packages will be installed only when the container starts.
 
-The startup time can be increased if you mount `/directus/extensions` to the host, because `pnpm` cache is configured to be stored there. This will allow for faster startup times after the first run.
+You can decrease the startup time if you mount `/directus/packages` to the host, because `pnpm` cache is configured to be stored there, and it's the recommended setup if you intend to run it in production.
 
-For production it's still recommended to build your own image with the extensions installed (WIP), but if you can't and/or don't want to, at least make sure to mount the extensions directory to lower the startup time after the first run as the pnpm cache lives there.
+Note that for production, it's still recommended to build your own image with the extensions installed (check ONBUILD tags), but if you can't and/or don't want to, at least make sure to mount the extensions directory to decrease the startup time after the first run as the pnpm cache lives there.
 
 ## Features
 
@@ -24,10 +24,10 @@ For production it's still recommended to build your own image with the extension
 
 ## Planned
 
-- [ ] Increase startup time
+- [ ] Decrease the startup time
   - [ ] Only run installation process if there's a configuration change
   - [ ] Provide "container based extensions" to compose the server installation
-  - [ ] Anything that would increase the startup time
+  - [ ] Anything that would decrease the startup time
 - [ ] Building custom images with extensions
 - [ ] Native support for different registries
 - [ ] Native support for `git` repositories

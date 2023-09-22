@@ -139,7 +139,9 @@ export async function main() {
 
   const releases = (await getPackageReleases("directus")).filter(
     (release) =>
-      semver.gte(release.version, "10.0.0") && !(release.version in directus)
+      semver.gte(release.version, "10.0.0") &&
+      !(release.version in directus) &&
+      !semver.prerelease(release.version)
   );
 
   let packages: Record<string, Release[]> = {};

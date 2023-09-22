@@ -23,13 +23,19 @@ export async function main() {
     },
   ];
 
+  const pushes = [];
+
   for (const base of bases) {
-    for (const version of Object.keys(directus)) {
+    for (const version of ["latest", ...Object.keys(directus)]) {
       for (const target of targets) {
         for (const env of envs) {
-          const api = directus[version]!.packages.find(
-            (pkg) => pkg.name == "@directus/api"
-          )!;
+          const api =
+            version == "latest"
+              ? { version: "latest" }
+              : directus[version]!.packages.find(
+                  (pkg) => pkg.name == "@directus/api"
+                )!;
+
           const tag = `linefusion/directus:${version}-${base.replace(
             ":",
             ""
@@ -73,12 +79,13 @@ export async function main() {
             {}
           );
 
-          await execute("docker", ["push", tag], {});
+          pushes.push(execute("docker", ["push", tag], {}));
         }
       }
-      return;
     }
   }
+
+  await Promise.all(pushes);
 }
 
 if (typeof require !== "undefined" && require.main === module) {

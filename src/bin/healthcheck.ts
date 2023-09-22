@@ -9,7 +9,5 @@ const { PORT } = loadEnv({
 
 http.get(`http://127.0.0.1:${PORT}/server/info`, (res) => {
   console.log(res);
-  process.exit(1);
+  process.exit(0);
 });
-
-process.exit(1);

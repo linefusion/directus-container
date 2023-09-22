@@ -36,10 +36,10 @@ USER node
 
 ENV BASE_IMAGE=${BASE_IMAGE:-"node:20-alpine"}
 
-ARG DIRECTUS_VERSION="10.0.0"
+ARG DIRECTUS_VERSION="latest"
 ENV DIRECTUS_VERSION=${DIRECTUS_VERSION:-"latest"}
 
-ARG DIRECTUS_API_VERSION="10.0.0"
+ARG DIRECTUS_API_VERSION="latest"
 ENV DIRECTUS_API_VERSION=${DIRECTUS_API_VERSION:-"latest"}
 
 ENV DIRECTUS_BOOTSTRAP_ENABLED="true"
@@ -93,13 +93,13 @@ VOLUME "/directus/extensions"
 VOLUME "/directus/database"
 VOLUME "/directus/uploads"
 
-# Healthchecks
-HEALTHCHECK \
-  --interval=30s \
-  --timeout=30s \
-  --start-period=1m \
-  --retries=5 \
-  CMD healthcheck
+# Healthchecks (not working, why?)
+# HEALTHCHECK \
+#   --interval=30s \
+#   --timeout=30s \
+#   --start-period=1m \
+#   --retries=5 \
+#   CMD healthcheck
 
 # Runtime
 

@@ -4,13 +4,29 @@ import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
-import semver from "semver";
+
 import { Release } from "../common/types";
 import { extractPackages } from "../common/packages";
 import { execute } from "../common/utils";
 
-const releases: Record<string, Release> = require(__dirname +
-  "/../versions.json");
+const releases: Record<string, Release> = {
+  latest: {
+    name: "directus",
+    version: "latest",
+    engines: {},
+    references: [],
+    packages: [
+      {
+        source: "directus",
+        name: "@directus/api",
+        version: "latest",
+        type: "dependencies",
+        resolved: "latest",
+      },
+    ],
+  },
+  ...require(__dirname + "/../versions.json"),
+};
 
 const {
   DIRECTUS_INSTANCE_ID,
@@ -99,7 +115,7 @@ export function getDirectusVersion() {
   }
 
   if (version == "latest") {
-    version = Object.keys(releases).sort(semver.compare).reverse()[0]!;
+    //version = Object.keys(releases).sort(semver.compare).reverse()[0]!; // Get latest from cache
     console.log(
       `\n` +
         `WARN: Using "latest" version might not be the actual latest one.\n` +
