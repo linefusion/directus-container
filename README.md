@@ -1,6 +1,6 @@
 # Directus Docker Images
 
-Alternative container image for Directus.
+Alternative container image for Directus with support for extensions.
 
 > `linefusion/directus:latest`
 
