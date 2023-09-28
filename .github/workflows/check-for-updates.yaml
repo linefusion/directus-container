@@ -24,4 +24,5 @@ jobs:
         with:
           title: Directs updates
           branch: automation/auto-update
+          branch-suffix: timestamp
           delete-branch: true
