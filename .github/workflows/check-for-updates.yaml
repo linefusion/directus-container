@@ -25,6 +25,7 @@ jobs:
           title: New Directus version available
           committer: Black Rabbit <br@linefusion.io>
           commit-message: add new directus version
+          body: Automated check for new Directus versions
           branch: automation/auto-update
           branch-suffix: timestamp
           delete-branch: true
