@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 
+import _ from "lodash";
 import fs from "node:fs";
 import { RawPackument, getRawPackument } from "query-registry";
 import semver from "semver";
@@ -197,45 +198,42 @@ export async function main() {
   }
 
   if (process.env.GITHUB_OUTPUT) {
+    const releasesReversed = [...releases].reverse();
     fs.writeFileSync(
       process.env.GITHUB_OUTPUT,
       [
         "versions_markdown<<EOF",
-        ...releases.toReversed().map((r) => `- ${r.version}`),
+        ...releasesReversed.map((r) => `- ${r.version}`),
         "EOF",
-        `versions_inline=${releases
-          .toReversed()
-          .map((r) => r.version)
-          .join(", ")}`,
+        `versions_inline=${releasesReversed.map((r) => r.version).join(", ")}`,
       ].join("\n")
     );
   }
 
   const output = {} as any;
   for (const release of releases) {
-    console.log({ release });
-    // const root = packages[release.name]?.find(
-    //   (rel) => rel.version === release.version
-    // )!;
-    // const references = await flatten(root);
-    // root.references = references.filter((ref) => !isDirectusReference(ref));
-    // root.packages = references.filter(isDirectusReference);
-    // root.references = _.uniqWith(root.references, _.isEqual);
-    // root.packages = _.uniqWith(root.packages, _.isEqual);
-    // output[release.version] = root;
+    const root = packages[release.name]?.find(
+      (rel) => rel.version === release.version
+    )!;
+    const references = await flatten(root);
+    root.references = references.filter((ref) => !isDirectusReference(ref));
+    root.packages = references.filter(isDirectusReference);
+    root.references = _.uniqWith(root.references, _.isEqual);
+    root.packages = _.uniqWith(root.packages, _.isEqual);
+    output[release.version] = root;
   }
 
-  // fs.writeFileSync(
-  //   VERSIONS_FILE,
-  //   JSON.stringify(
-  //     {
-  //       ...output,
-  //       ...directus,
-  //     },
-  //     null,
-  //     2
-  //   )
-  // );
+  fs.writeFileSync(
+    VERSIONS_FILE,
+    JSON.stringify(
+      {
+        ...output,
+        ...directus,
+      },
+      null,
+      2
+    )
+  );
 }
 
 if (typeof require !== "undefined" && require.main === module) {
