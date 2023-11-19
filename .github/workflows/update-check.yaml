@@ -27,11 +27,15 @@ jobs:
         with:
           title: Add missing versions (${{ steps.version.outputs.versions_inline }})
           committer: Black Rabbit <br@linefusion.io>
-          commit-message: |
-            Add missing Directus versions:
-            ${{ steps.version.outputs.versions_markdown }}
+          commit-message: "adds missing versions - ${{ steps.version.outputs.versions_inline }}"
           body: |
-            Automated check for new Directus versions
+            # Automatic Update Check
+
+            This PR adds missing Directus versions to versions.json file.
+
+            ## Versions
+
+            ${{ steps.version.outputs.versions_markdown }}
           branch: automation/autoupdate
           delete-branch: true
           assignees: hermesalvesbr,wolfulus
