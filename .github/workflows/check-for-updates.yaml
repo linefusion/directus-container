@@ -1,10 +1,10 @@
 on:
   workflow_dispatch:
   schedule:
-    - cron: "* 0 * * *"
+    - cron: "0 0 * * *"
 
 jobs:
-  check-for-updates:
+  autoupdate:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,15 +17,19 @@ jobs:
         run: corepack enable pnpm
       - name: Install dependencies
         run: pnpm install
-      - name: Fetch versions
+      - id: version
+        name: Fetch versions
         run: pnpm run build:version
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          title: New Directus version available
+          title: Add missing versions (${{ steps.version.outputs.versions_inline }})
           committer: Black Rabbit <br@linefusion.io>
-          commit-message: add new directus version
-          body: Automated check for new Directus versions
-          branch: automation/auto-update
-          branch-suffix: timestamp
+          commit-message: |
+            Add missing Directus versions:
+            ${{ steps.version.outputs.versions_markdown }}
+          body: |
+            Automated check for new Directus versions
+          branch: automation/autoupdate
           delete-branch: true
+          assignees: hermesalvesbr,wolfulus

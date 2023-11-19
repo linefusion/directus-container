@@ -1,11 +1,10 @@
 #!/usr/bin/env tsx
 
 import fs from "node:fs";
+import { RawPackument, getRawPackument } from "query-registry";
 import semver from "semver";
 import { memoize } from "../common/utils";
-import { RawPackument, getRawPackument } from "query-registry";
 
-import _ from "lodash";
 import { Reference, Release } from "../common/types";
 
 const VERSIONS_FILE = __dirname + "/../versions.json";
@@ -137,7 +136,7 @@ export async function main() {
     fs.readFileSync(VERSIONS_FILE, { encoding: "utf-8" }).toString()
   );
 
-  const releases = (await getPackageReleases("directus")).filter(
+  let releases = (await getPackageReleases("directus")).filter(
     (release) =>
       semver.gte(release.version, "10.0.0") &&
       !(release.version in directus) &&
@@ -197,30 +196,46 @@ export async function main() {
     return ref.name == "directus" || ref.name.startsWith("@directus/");
   }
 
-  const output = {} as any;
-  for (const release of releases) {
-    const root = packages[release.name]?.find(
-      (rel) => rel.version === release.version
-    )!;
-    const references = await flatten(root);
-    root.references = references.filter((ref) => !isDirectusReference(ref));
-    root.packages = references.filter(isDirectusReference);
-    root.references = _.uniqWith(root.references, _.isEqual);
-    root.packages = _.uniqWith(root.packages, _.isEqual);
-    output[release.version] = root;
+  if (process.env.GITHUB_OUTPUT) {
+    fs.writeFileSync(
+      process.env.GITHUB_OUTPUT,
+      [
+        "versions_markdown<<EOF",
+        ...releases.toReversed().map((r) => `- ${r.version}`),
+        "EOF",
+        `versions_inline=${releases
+          .toReversed()
+          .map((r) => r.version)
+          .join(", ")}`,
+      ].join("\n")
+    );
   }
 
-  fs.writeFileSync(
-    VERSIONS_FILE,
-    JSON.stringify(
-      {
-        ...output,
-        ...directus,
-      },
-      null,
-      2
-    )
-  );
+  const output = {} as any;
+  for (const release of releases) {
+    console.log({ release });
+    // const root = packages[release.name]?.find(
+    //   (rel) => rel.version === release.version
+    // )!;
+    // const references = await flatten(root);
+    // root.references = references.filter((ref) => !isDirectusReference(ref));
+    // root.packages = references.filter(isDirectusReference);
+    // root.references = _.uniqWith(root.references, _.isEqual);
+    // root.packages = _.uniqWith(root.packages, _.isEqual);
+    // output[release.version] = root;
+  }
+
+  // fs.writeFileSync(
+  //   VERSIONS_FILE,
+  //   JSON.stringify(
+  //     {
+  //       ...output,
+  //       ...directus,
+  //     },
+  //     null,
+  //     2
+  //   )
+  // );
 }
 
 if (typeof require !== "undefined" && require.main === module) {
