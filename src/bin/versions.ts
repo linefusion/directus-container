@@ -139,7 +139,7 @@ export async function main() {
 
   let releases = (await getPackageReleases("directus")).filter(
     (release) =>
-      semver.gte(release.version, "10.0.0") &&
+      semver.gte(release.version, "9.0.0") &&
       !(release.version in directus) &&
       !semver.prerelease(release.version)
   );
@@ -223,17 +223,21 @@ export async function main() {
     output[release.version] = root;
   }
 
-  fs.writeFileSync(
-    VERSIONS_FILE,
-    JSON.stringify(
-      {
-        ...output,
-        ...directus,
-      },
-      null,
-      2
-    )
-  );
+  let value = {};
+
+  let all = {
+    ...output,
+    ...directus,
+  };
+
+  Object.keys(all)
+    .sort(semver.compare)
+    .reverse()
+    .forEach((key) => {
+      value[key] = all[key];
+    });
+
+  fs.writeFileSync(VERSIONS_FILE, JSON.stringify(value, null, 2));
 }
 
 if (typeof require !== "undefined" && require.main === module) {

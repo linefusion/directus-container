@@ -10,7 +10,10 @@ importers:
     dependencies:
       '@wolfpkgs/core':
         specifier: ^0.2.13
-        version: 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)(zod@3.22.4)
+        version: 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)
+      prettier:
+        specifier: ^3.3.3
+        version: 3.3.3
       semver:
         specifier: ^7.5.4
         version: 7.5.4
@@ -29,13 +32,13 @@ importers:
         version: 7.5.5
       '@wolfpkgs/files':
         specifier: ^0.2.13
-        version: 0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)
+        version: 0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))
       '@wolfpkgs/package':
         specifier: ^0.2.14
-        version: 0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)
+        version: 0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))
       '@wolfpkgs/toolbox':
         specifier: ^0.2.13
-        version: 0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(zod-validation-error@1.5.0)(zod@3.22.4)
+        version: 0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)
       changeset:
         specifier: ^0.2.6
         version: 0.2.6
@@ -809,6 +812,11 @@ packages:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
     engines: {node: ^10 || ^12 || >=14}
 
+  prettier@3.3.3:
+    resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
+    engines: {node: '>=14'}
+    hasBin: true
+
   pretty-format@29.7.0:
     resolution: {integrity: sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
@@ -1339,7 +1347,7 @@ snapshots:
       loupe: 2.3.7
       pretty-format: 29.7.0
 
-  '@wolfpkgs/core@0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)(zod@3.22.4)':
+  '@wolfpkgs/core@0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)':
     dependencies:
       dotenv: 16.3.1
       dotenv-expand: 10.0.0
@@ -1357,9 +1365,9 @@ snapshots:
       - '@types/node'
       - typescript
 
-  '@wolfpkgs/files@0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)':
+  '@wolfpkgs/files@0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))':
     dependencies:
-      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)(zod@3.22.4)
+      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)
       fast-glob: 3.3.2
       zod: 3.22.4
     transitivePeerDependencies:
@@ -1371,10 +1379,10 @@ snapshots:
       - yargs-parser
       - zod-validation-error
 
-  '@wolfpkgs/package@0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)':
+  '@wolfpkgs/package@0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))':
     dependencies:
-      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)(zod@3.22.4)
-      '@wolfpkgs/pnpm': 0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)
+      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)
+      '@wolfpkgs/pnpm': 0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))
       sort-package-json: 2.6.0
       zod: 3.22.4
     transitivePeerDependencies:
@@ -1387,9 +1395,9 @@ snapshots:
       - yargs-parser
       - zod-validation-error
 
-  '@wolfpkgs/pnpm@0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)':
+  '@wolfpkgs/pnpm@0.2.14(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))':
     dependencies:
-      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)(zod@3.22.4)
+      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)
       execa: 7.2.0
       semver: 7.5.4
       zod: 3.22.4
@@ -1403,9 +1411,9 @@ snapshots:
       - yargs-parser
       - zod-validation-error
 
-  '@wolfpkgs/toolbox@0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(zod-validation-error@1.5.0)(zod@3.22.4)':
+  '@wolfpkgs/toolbox@0.2.13(@types/node@20.9.2)(ts-pattern@5.0.5)(typescript@5.2.2)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)':
     dependencies:
-      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0)(zod@3.22.4)
+      '@wolfpkgs/core': 0.2.13(@types/node@20.9.2)(fast-glob@3.3.2)(ts-pattern@5.0.5)(typescript@5.2.2)(yargs-parser@21.1.1)(zod-validation-error@1.5.0(zod@3.22.4))(zod@3.22.4)
       columnify: 1.6.0
       execa: 7.2.0
       fast-glob: 3.3.2
@@ -1733,6 +1741,8 @@ snapshots:
       picocolors: 1.0.0
       source-map-js: 1.0.2
 
+  prettier@3.3.3: {}
+
   pretty-format@29.7.0:
     dependencies:
       '@jest/schemas': 29.6.3
@@ -1912,11 +1922,11 @@ snapshots:
 
   vite@5.0.0(@types/node@20.9.2):
     dependencies:
-      '@types/node': 20.9.2
       esbuild: 0.19.6
       postcss: 8.4.31
       rollup: 4.5.0
     optionalDependencies:
+      '@types/node': 20.9.2
       fsevents: 2.3.3
 
   vitest@0.34.6:
