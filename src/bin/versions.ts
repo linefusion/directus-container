@@ -223,7 +223,7 @@ export async function main() {
     output[release.version] = root;
   }
 
-  let value = {};
+  let value: Record<any, any> = {};
 
   let all = {
     ...output,

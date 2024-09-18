@@ -26,7 +26,7 @@ jobs:
       - name: Enable PNPM
         run: corepack enable pnpm
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
       - name: Build source
         run: pnpm run build:src && pnpm run build:copy
       - name: Build and push images
