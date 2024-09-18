@@ -2,7 +2,7 @@
 
 import _ from "lodash";
 import fs from "node:fs";
-import { RawPackument, getRawPackument } from "query-registry";
+import { getRawPackument, RawPackument } from "query-registry";
 import semver from "semver";
 import { memoize } from "../common/utils";
 
@@ -24,9 +24,7 @@ const getPackageReleases = memoize(async (name: string): Promise<Release[]> => {
 
   let pkg: RawPackument;
   try {
-    pkg = await getRawPackument({
-      name,
-    });
+    pkg = await getRawPackument({ name });
   } catch (e) {
     if (e.response?.statusText == "Not Found") {
       return [];
@@ -55,8 +53,8 @@ const getPackageReleases = memoize(async (name: string): Promise<Release[]> => {
         references: ([] as [string, string, Reference["type"]][])
           .concat(
             Object.entries(pkg.versions[version]?.dependencies || {}).map(
-              (v) => [...v, "dependencies"]
-            )
+              (v) => [...v, "dependencies"],
+            ),
           )
           //.concat(
           //  Object.entries(pkg.versions[version]?.devDependencies || {}).map(
@@ -65,13 +63,13 @@ const getPackageReleases = memoize(async (name: string): Promise<Release[]> => {
           //)
           .concat(
             Object.entries(pkg.versions[version]?.peerDependencies || {}).map(
-              (v) => [...v, "peerDependencies"]
-            )
+              (v) => [...v, "peerDependencies"],
+            ),
           )
           .concat(
             Object.entries(
-              pkg.versions[version]?.optionalDependencies || {}
-            ).map((v) => [...v, "optionalDependencies"])
+              pkg.versions[version]?.optionalDependencies || {},
+            ).map((v) => [...v, "optionalDependencies"]),
           )
           .map(
             ([refName, refVersion, refType]): Reference => ({
@@ -79,9 +77,9 @@ const getPackageReleases = memoize(async (name: string): Promise<Release[]> => {
               name: refName,
               version: refVersion,
               type: refType as any as Reference["type"],
-            })
+            }),
           ),
-      })
+      }),
     );
 
   releases.forEach((release) => {
@@ -98,7 +96,7 @@ async function getLatestReleaseFor(name: string, version: string) {
 
 async function expandPackage(
   release: Release,
-  packages: Record<string, Release[]> = {}
+  packages: Record<string, Release[]> = {},
 ) {
   const k = `${release.name}@${release.version}`;
   if (k in cache.explored) {
@@ -122,7 +120,7 @@ async function expandPackage(
         return;
       }
       await expandPackage(rel, packages);
-    })
+    }),
   );
 
   return packages;
@@ -134,14 +132,14 @@ export async function main() {
   }
 
   const directus: Record<string, Release[]> = JSON.parse(
-    fs.readFileSync(VERSIONS_FILE, { encoding: "utf-8" }).toString()
+    fs.readFileSync(VERSIONS_FILE, { encoding: "utf-8" }).toString(),
   );
 
   let releases = (await getPackageReleases("directus")).filter(
     (release) =>
       semver.gte(release.version, "9.0.0") &&
       !(release.version in directus) &&
-      !semver.prerelease(release.version)
+      !semver.prerelease(release.version),
   );
 
   let packages: Record<string, Release[]> = {};
@@ -151,14 +149,14 @@ export async function main() {
 
   async function flatten(
     release: Release,
-    refs: Reference[] = []
+    refs: Reference[] = [],
   ): Promise<Reference[]> {
     await Promise.all(
       release.references.map(async (reference) => {
         if (
           refs.find(
             (ref) =>
-              ref.name === reference.name && ref.version === reference.version
+              ref.name === reference.name && ref.version === reference.version,
           )
         ) {
           return;
@@ -166,7 +164,7 @@ export async function main() {
 
         const latest = await getLatestReleaseFor(
           reference.name,
-          reference.version
+          reference.version,
         );
 
         if (!latest) {
@@ -179,7 +177,7 @@ export async function main() {
         });
 
         const referenceRelease = packages[reference.name]?.find(
-          (rel) => rel.version === reference.version
+          (rel) => rel.version === reference.version,
         )!;
 
         if (!referenceRelease) {
@@ -187,7 +185,7 @@ export async function main() {
         }
 
         return await flatten(referenceRelease, refs);
-      })
+      }),
     );
 
     return refs;
@@ -206,14 +204,14 @@ export async function main() {
         ...releasesReversed.map((r) => `- ${r.version}`),
         "EOF",
         `versions_inline=${releasesReversed.map((r) => r.version).join(", ")}`,
-      ].join("\n")
+      ].join("\n"),
     );
   }
 
   const output = {} as any;
   for (const release of releases) {
     const root = packages[release.name]?.find(
-      (rel) => rel.version === release.version
+      (rel) => rel.version === release.version,
     )!;
     const references = await flatten(root);
     root.references = references.filter((ref) => !isDirectusReference(ref));
