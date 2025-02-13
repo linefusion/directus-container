@@ -14,6 +14,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
+      - name: Update Corepack
+        run: npm i -g --force corepack
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
