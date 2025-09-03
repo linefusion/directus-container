@@ -34,6 +34,7 @@ RUN \
 
 USER node
 
+ARG BASE_IMAGE
 ENV BASE_IMAGE=${BASE_IMAGE:-"node:20-alpine"}
 
 ARG DIRECTUS_VERSION="latest"

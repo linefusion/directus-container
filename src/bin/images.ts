@@ -6,6 +6,8 @@ import fs from "node:fs";
 import { execute } from "../common/utils";
 import { Release } from "../common/types";
 
+import semver from "semver";
+
 const VERSIONS_FILE = __dirname + "/../versions.json";
 
 export async function main() {
@@ -13,7 +15,6 @@ export async function main() {
     fs.readFileSync(VERSIONS_FILE, { encoding: "utf-8" }).toString()
   );
 
-  const bases = ["node:20-alpine"];
   const targets = ["base", "runtime", "onbuild"];
   const envs = [
     { name: "production", tag: "" },
@@ -25,18 +26,19 @@ export async function main() {
 
   const pushes: Promise<any>[] = [];
 
-  for (const base of bases) {
+  //for (const base of bases) {
     for (const version of ["latest", ...Object.keys(directus)]) {
       for (const target of targets) {
         for (const env of envs) {
-          const api =
-            version == "latest"
-              ? { version: "latest" }
-              : directus[version]!.packages.find(
-                  (pkg) => pkg.name == "@directus/api"
-                )!;
 
-          const tag = `${version}-${base.replace(":", "")}-${target}${env.tag}`;
+          const pkg = version == "latest" ? directus[semver.sort(Object.keys(directus)).pop()!] : directus[version];
+          const api = pkg!.packages.find(({ name }) => name == "@directus/api")!;
+
+          const baseVersion = semver.coerce(pkg?.engines?.node ?? "20")?.major.toString() ?? "20";
+
+          const baseImage = `node:${baseVersion}-alpine`;
+
+          const tag = `${version}-${baseImage.replace(":", "")}-${target}${env.tag}`;
           const fqdn = `linefusion/directus:${tag}`;
 
           try {
@@ -57,11 +59,12 @@ export async function main() {
   Building Directus
 
      FQDN: ${fqdn}
+     Base: ${baseImage}
 
   Version: v${version}
       API: v${api.version}
 
-     Node: ${base}
+     Node: ${baseVersion}
       Env: ${env.name}
    Target: ${target}
 
@@ -79,7 +82,7 @@ export async function main() {
               "--build-arg",
               `NODE_ENV=${env.name}`,
               "--build-arg",
-              `BASE_IMAGE=${base}`,
+              `BASE_IMAGE=${baseImage}`,
               "--build-arg",
               `DIRECTUS_VERSION=${version}`,
               "--build-arg",
@@ -93,7 +96,7 @@ export async function main() {
         }
       }
     }
-  }
+//  }
 
   await Promise.all(pushes);
 }
