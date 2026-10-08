@@ -1,5 +1,8 @@
 # Directus Docker Images
 
+> [!CAUTION]
+> This project is not maintained anymore. Please refer to the official images instead.
+
 Alternative container image for Directus with support for extensions.
 
 > `linefusion/directus:latest`
